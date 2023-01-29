@@ -2,6 +2,7 @@ import type { JSONSchemaType } from 'ajv';
 import { Button, Checkbox, Form, Input, InputNumber } from 'antd';
 
 import useJsonSchema from '@/hooks/useJsonSchema';
+import useLoadJsonSchema from '@/hooks/useLoadJsonSchema';
 
 type SchemaData = {
   username: string;
@@ -23,49 +24,13 @@ type LocalData = {
 const Index = () => {
   const [form] = Form.useForm<LocalData>();
 
-  // TODO: get from api
-  const jsonSchema: JSONSchemaType<SchemaData> = {
-    type: 'object',
-    properties: {
-      username: {
-        type: 'string',
-        nullable: false,
-        minLength: 3,
-      },
-      password: {
-        type: 'string',
-        nullable: false,
-        minLength: 6,
-        maxLength: 10,
-      },
-      phone: {
-        type: 'string',
-        nullable: false,
-        pattern: '^((\\+62-?)|0)?[0-9]{10,13}$',
-      },
-      age: {
-        type: 'number',
-        nullable: true, // TODO: handle this case, currently if field is optional, must set nullable to true
-        minimum: 18,
-        maximum: 100,
-      },
-      acceptTerms: {
-        type: 'boolean',
-        nullable: false,
-        const: true,
-        // errorMessage is not official from json schema, but ajv support this
-        errorMessage: {
-          const: 'You must accept terms and conditions',
-        },
-      },
-    },
-    required: ['username', 'password', 'phone'],
-  };
+  // fetch json schema from server
+  const { jsonSchema } = useLoadJsonSchema('/api/json-schema');
 
   const { validate, validateField, mapErrorsToFields } = useJsonSchema<
     SchemaData,
     keyof SchemaData
-  >(jsonSchema, {
+  >(jsonSchema as JSONSchemaType<SchemaData>, {
     mapFields: {
       username: 'localUsername',
       password: 'localPassword',
