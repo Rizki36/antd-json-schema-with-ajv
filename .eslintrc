@@ -56,7 +56,11 @@
         "unused-imports/no-unused-vars": [
           "error",
           { "argsIgnorePattern": "^_" }
-        ]
+        ],
+        "import/no-extraneous-dependencies": "off",
+        "no-template-curly-in-string": "off",
+        "@typescript-eslint/no-use-before-define": "off",
+        "import/no-named-as-default": "off"
       }
     },
     // Configuration for testing
